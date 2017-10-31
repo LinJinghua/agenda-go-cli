@@ -16,22 +16,30 @@ package cmd
 
 import (
 	"fmt"
-
+	"agenda-go-cli/service"
 	"github.com/spf13/cobra"
 )
 
 // quitmeetingCmd represents the quitmeeting command
 var quitmeetingCmd = &cobra.Command{
 	Use:   "quitmeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "quit a meeting",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("quitmeeting called")
+		errLog.Println("Quit Meeting called")
+		tmp_t, _ := cmd.Flags().GetString("title")
+		if tmp_t == "" {
+			fmt.Println("Please input meeting title")
+			return
+		}
+		if user,flag := service.GetCurUser(); flag != true {
+			fmt.Println("Error: Please login firstly!")
+		} else {
+			if flag := service.QuitMeeting(user.Name, tmp_t); flag == false {
+				fmt.Println("Error: Meeting not exist or you're not a participator of it")
+			} else {
+				fmt.Println("Quit Successfully")
+			}
+		}
 	},
 }
 
@@ -39,7 +47,7 @@ func init() {
 	RootCmd.AddCommand(quitmeetingCmd)
 
 	// Here you will define your flags and configuration settings.
-
+	quitmeetingCmd.Flags().StringP("title", "t", "", "the title of meeting")
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// quitmeetingCmd.PersistentFlags().String("foo", "", "A help for foo")

@@ -16,22 +16,30 @@ package cmd
 
 import (
 	"fmt"
-
+	"agenda-go-cli/service"
 	"github.com/spf13/cobra"
 )
 
 // deletemeetingCmd represents the deletemeeting command
 var deletemeetingCmd = &cobra.Command{
 	Use:   "deletemeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "delete meeting",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("deletemeeting called")
+		errLog.Println("Delete Meeting called")
+		tmp_t, _ := cmd.Flags().GetString("title")
+		if tmp_t == "" {
+			fmt.Println("Error: Please input meeting title")
+			return
+		}
+		if user,flag := service.GetCurUser(); flag != true {
+			fmt.Println("Error: Please login firstly!")
+		} else {
+			if c := service.DeleteMeeting(user.Name, tmp_t); c == 0 {
+				fmt.Println("Error: Meeting not exist or you're not a Sponsor of it")
+			} else {
+				fmt.Println("Delete Successfully")
+			}
+		}
 	},
 }
 
@@ -39,7 +47,7 @@ func init() {
 	RootCmd.AddCommand(deletemeetingCmd)
 
 	// Here you will define your flags and configuration settings.
-
+	deletemeetingCmd.Flags().StringP("title", "t","", "the title of meeting")
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// deletemeetingCmd.PersistentFlags().String("foo", "", "A help for foo")

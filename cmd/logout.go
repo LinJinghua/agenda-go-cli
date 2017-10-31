@@ -16,22 +16,21 @@ package cmd
 
 import (
 	"fmt"
-
+	"agenda-go-cli/service"
 	"github.com/spf13/cobra"
 )
 
 // logoutCmd represents the logout command
 var logoutCmd = &cobra.Command{
 	Use:   "logout",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "User logout",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("logout called")
+		errLog.Println("Logout called")
+		if err := service.UserLogout(); err != true {
+			fmt.Println("Some error happened when log out, please read error.log for details")
+		} else {
+			fmt.Println("Logout Successfully")
+		}
 	},
 }
 

@@ -16,22 +16,25 @@ package cmd
 
 import (
 	"fmt"
-
+	"agenda-go-cli/service"
 	"github.com/spf13/cobra"
 )
-
 // clearmeetingCmd represents the clearmeeting command
 var clearmeetingCmd = &cobra.Command{
 	Use:   "clearmeeting",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Clear all meeting as a sponsor",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("clearmeeting called")
+		errLog.Println("Clear Meeting called")
+		if user, flag := service.GetCurUser(); flag != true {
+			fmt.Println("Please Log in firstly!")
+		} else {
+			cm,flag := service.ClearMeeting(user.Name)
+			if flag == true {
+				fmt.Println("Successfully clear ", cm," meeting(s)")
+			} else {
+				fmt.Println("ClearMeeting failed. Check error.log")
+			}
+		}
 	},
 }
 
